@@ -1,0 +1,167 @@
+db.createCollection('users', {
+	validator: {
+		$jsonSchema: {
+			bsonType: "object",
+			required: ['username', 'password'],
+			properties: {
+				username: {
+					bsonType: 'string',
+					pattern: '[a-z]{2,15}',
+					description: 'Mon champ username.'
+				},
+				password: {
+					bsonType: 'string',
+					pattern: '..+'
+				},
+				enable: {
+					bsonType: 'bool'
+				},
+				createdAt: {
+					bsonType: 'timestamp'
+				}
+			}
+		}
+	}
+});
+
+
+
+db.users.insertOne({
+	username: "foo",
+	password: "bar"
+});
+
+db.users.insertOne({
+	username: "abe",
+	password: "ruptureFarms"
+});
+
+db.users.find({
+	username: 'foo'
+});
+
+db.users.find({
+	username: {
+		$regex: '^a'
+	}
+});
+
+
+db.createCollection('rooms', {
+	validator: {
+		$jsonSchema: {
+			bsonType: "object",
+			required: ['language', 'name'],
+			additionalProperties: false,
+			properties: {
+				_id: {
+					bsonType: 'objectId'
+				},
+				language: {
+					bsonType: 'string',
+					pattern: '[a-z]{2}',
+				},
+				name: {
+					bsonType: 'string',
+					pattern: '[a-z]{2,15}'
+				},
+				siz_max: {
+					bsonType: 'int',
+				},
+				messages: {
+					bsonType: 'array',
+					items: {
+						bsonType: 'object',
+						required: ['content', 'createdAt', '_id'],
+						additionalProperties: false,
+						properties: {
+							_id: {
+								bsonType: 'objectId'
+							},
+							content: {
+								bsonType: 'string',
+								pattern: '.+'
+							},
+							createdAt: {
+								bsonType: 'timestamp'
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+});
+
+
+db.rooms.insertOne({
+	name: 'first_room',
+	language: 'en'
+});
+
+db.rooms.insertOne({
+	name: 'first_room',
+	language: 'en',
+	foo: 'bar'
+});
+
+
+db.rooms.updateOne({
+	_id: ObjectId("5b447b7eec6ce59c4828c41d")
+}, {
+	$set: {
+		messages: [{
+			content: 'Hello',
+			createdAt: Timestamp()
+		}]
+	}
+});
+
+db.rooms.updateOne({
+	_id: ObjectId("5b447b7eec6ce59c4828c41d")
+}, {
+	$push: {
+		messages: {
+			content: 'Hug',
+			createdAt: Timestamp()
+		}
+	}
+});
+
+db.rooms.updateOne({
+	_id: ObjectId("5b447b7eec6ce59c4828c41d")
+}, {
+	$push: {
+		messages: {
+			content: 'NOOOOOOOOO!!!!!!',
+			createdAt: Timestamp()
+		}
+	}
+});
+
+db.rooms.updateOne({
+	_id: ObjectId("5b447b7eec6ce59c4828c41d")
+}, {
+	$pull: {
+		messages: {
+			content: 'Hug',
+			createdAt: Timestamp()
+		}
+	}
+});
+
+
+db.rooms.find({
+	messages: {
+		$elemMatch: {
+			content: {
+				$regex: 'H'
+			}
+		}
+	}
+})
+
+
+https://www.mongodb.com/
+https://university.mongodb.com/?_ga=2.117874945.960257795.1531208112-1783531037.1531208112
+https://university.mongodb.com/certification
